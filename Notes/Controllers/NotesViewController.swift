@@ -106,6 +106,7 @@ class NotesViewController: UIViewController {
     @objc func addNoteTapped() {
         let objectID = ManagerCoreData.shared.createNote(attributedText: NSAttributedString.init(string: ""))
         let nextViewController = NoteViewController(objectID: objectID!)
+        nextViewController.hidesBottomBarWhenPushed = true
         show(nextViewController, sender: self)
     }
     
@@ -217,6 +218,7 @@ extension NotesViewController: UITableViewDataSource, UITableViewDelegate, UISea
         tableView.deselectRow(at: indexPath, animated: true)
 
         let nextViewController = NoteViewController(objectID: sections[indexPath.section].notes[indexPath.row].objectID)
+        nextViewController.hidesBottomBarWhenPushed = true
         show(nextViewController, sender: self)
     }
     
