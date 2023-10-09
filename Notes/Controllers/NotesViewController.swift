@@ -168,11 +168,24 @@ extension NotesViewController: UITableViewDataSource, UITableViewDelegate, UISea
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NoteCell") as! NoteTableViewCell
-        
+
         let text = convertToString(sections[indexPath.section].notes[indexPath.row])
-                
-        cell.header.text = text != "" ? text : "New Note"
-        cell.text.text = Sort.date(date: sections[indexPath.section].notes[indexPath.row].dateEdited!) + " " + (text != "" ? text : "No additional text")
+
+        let lines = text.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n")
+
+        if !lines.isEmpty {
+            cell.header.text = lines[0]
+            var remainingText = lines.dropFirst().filter { !$0.isEmpty }
+            if remainingText.isEmpty {
+                remainingText = ["No additional text"]
+            }
+            cell.text.text = remainingText.joined(separator: "\n")
+        } else {
+            cell.header.text = "New Note"
+            cell.text.text = "No additional text"
+        }
+
+        cell.text.text = Sort.date(date: sections[indexPath.section].notes[indexPath.row].dateEdited!) + " " + cell.text.text!
         return cell
     }
 

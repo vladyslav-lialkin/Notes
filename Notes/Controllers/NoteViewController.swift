@@ -189,11 +189,7 @@ extension NoteViewController: UITextViewDelegate {
             attributedTextView.typingAttributes[.font] = UIFont.systemFont(ofSize: 18)
             formatScrollView.setFormat(fontName: UIFont.systemFont(ofSize: 18).fontName)
             return true
-        } /*else if text.isEmpty && range.length > 0 {
-            guard previewSRL != nil, previewSRL >= 2 else { return true }
-            previewSRL -= 2
-            return true
-        }*/
+        }
         return true
     }
 }
