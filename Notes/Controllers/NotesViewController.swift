@@ -67,23 +67,7 @@ class NotesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         refreshNotes()
-        tabBarController!.tabBar.items?[0].title = "\(ManagerCoreData.shared.fetchNotes().count) notes"
-    }
-    
-    private func refreshNotes() {
-        let sortedNotes = ManagerCoreData.shared.fetchNotes()
-        
-        switch sort {
-        case .dateEdited:
-            sections = Sort.notes(notes: sortedNotes.sorted { $0.dateEdited! > $1.dateEdited! }, sort: .dateEdited)
-        case .dateCreated:
-            sections = Sort.notes(notes: sortedNotes.sorted { $0.dateCreated! > $1.dateCreated! }, sort: .dateCreated)
-        case .title:
-            sections = []
-            sections.append(Section(title: "Notes", notes: sortedNotes.sorted { convertToString($0) < convertToString($1) }))
-        }
-        
-        tableView.reloadData()
+        showCountNotes()
     }
 
     private func createMenuForOptions() -> UIMenu {
@@ -123,6 +107,36 @@ class NotesViewController: UIViewController {
         let objectID = ManagerCoreData.shared.createNote(attributedText: NSAttributedString.init(string: ""))
         let nextViewController = NoteViewController(objectID: objectID!)
         show(nextViewController, sender: self)
+    }
+    
+    private func refreshNotes() {
+        let sortedNotes = ManagerCoreData.shared.fetchNotes()
+        
+        switch sort {
+        case .dateEdited:
+            sections = Sort.notes(notes: sortedNotes.sorted { $0.dateEdited! > $1.dateEdited! }, sort: .dateEdited)
+        case .dateCreated:
+            sections = Sort.notes(notes: sortedNotes.sorted { $0.dateCreated! > $1.dateCreated! }, sort: .dateCreated)
+        case .title:
+            sections = []
+            sections.append(Section(title: "Notes", notes: sortedNotes.sorted { convertToString($0) < convertToString($1) }))
+        }
+        
+        tableView.reloadData()
+    }
+    
+    private func showCountNotes() {
+        var countString: String!
+        let count = ManagerCoreData.shared.fetchNotes().count
+        switch count {
+        case 2...:
+            countString = "\(count) Notes"
+        case 1:
+            countString = "\(count) Note"
+        default:
+            countString = "No Notes"
+        }
+        tabBarController!.tabBar.items?[0].title = countString
     }
     
     func convertToString(_ note: Note) -> String {
@@ -177,7 +191,7 @@ extension NotesViewController: UITableViewDataSource, UITableViewDelegate, UISea
             }
             tableView.endUpdates()
             
-            tabBarController!.tabBar.items?[0].title = "\(ManagerCoreData.shared.fetchNotes().count) нотаток"
+            showCountNotes()
         case .insert: break
         @unknown default:
             fatalError("Error")
