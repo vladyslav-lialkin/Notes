@@ -173,7 +173,7 @@ extension NotesViewController: UITableViewDataSource, UITableViewDelegate, UISea
 
         let lines = text.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n")
 
-        if !lines.isEmpty {
+        if !lines.first!.replacingOccurrences(of: " ", with: "").isEmpty {
             cell.header.text = lines[0]
             var remainingText = lines.dropFirst().filter { !$0.isEmpty }
             if remainingText.isEmpty {
