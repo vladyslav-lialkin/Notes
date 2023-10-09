@@ -11,6 +11,7 @@ class ResultTableViewController: UITableViewController {
     
     private var notes = [Note]()
     private var foundNotes = [Note]()
+    private var searchString: String!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +28,7 @@ class ResultTableViewController: UITableViewController {
     }
     
     func searchForNotes(_ text: String) {
+        searchString = text
         foundNotes = notes.filter { note in
             let noteText = convertToString(note).lowercased()
             return noteText.contains(text.lowercased())
@@ -58,11 +60,42 @@ class ResultTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NoteCell") as! NoteTableViewCell
-        
+
         let text = convertToString(foundNotes[indexPath.row])
+
+        let lines = text.trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "\n")
+
+        if !lines.first!.replacingOccurrences(of: " ", with: "").isEmpty {
+            cell.header.text = lines[0]
+            var remainingText = lines.dropFirst().filter { !$0.isEmpty }
+            if remainingText.isEmpty {
+                remainingText = ["No additional text"]
+            }
+            cell.text.text = remainingText.joined(separator: "\n")
+            let headerAttributedText = NSMutableAttributedString(string: cell.header.text!)
+            let textAttributedText = NSMutableAttributedString(string: cell.text.text!)
+
+            if !searchString.isEmpty {
+                let firstRange = (cell.header.text! as NSString).range(of: searchString, options: .caseInsensitive)
+                headerAttributedText.addAttribute(.foregroundColor, value: UIColor.systemYellow, range: firstRange)
                 
-        cell.header.text = text != "" ? text : "New Note"
-        cell.text.text = Sort.date(date: foundNotes[indexPath.row].dateEdited!) + " " + (text != "" ? text : "No additional text")
+                let secondRange = (cell.text.text! as NSString).range(of: searchString, options: .caseInsensitive)
+                textAttributedText.addAttribute(.foregroundColor, value: UIColor.systemYellow, range: secondRange)
+            }
+            
+            cell.header.attributedText = headerAttributedText
+            cell.text.attributedText = textAttributedText
+        } else {
+            cell.header.attributedText = NSAttributedString(string: "New Note")
+            cell.text.attributedText =  NSAttributedString(string: "No additional text")
+        }
+        
+        let combinedText = NSMutableAttributedString()
+        combinedText.append(NSAttributedString(string: Sort.date(date: foundNotes[indexPath.row].dateEdited!)))
+        combinedText.append(NSAttributedString(string: " "))
+        combinedText.append(cell.text.attributedText!)
+
+        cell.text.attributedText = combinedText
         return cell
     }
 }
