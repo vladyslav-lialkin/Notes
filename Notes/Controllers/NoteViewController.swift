@@ -79,7 +79,9 @@ class NoteViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         attributedTextView.resignFirstResponder()
-        ManagerCoreData.shared.updataNote(with: objectID, attributedText: attributedTextView.attributedText)
+        if attributedTextView.attributedText != loadAttributedTextFromCoreData() {
+            ManagerCoreData.shared.updataNote(with: objectID, attributedText: attributedTextView.attributedText)
+        }
     }
     
     func setFont(_ font: UIFont) {
