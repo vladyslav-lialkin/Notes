@@ -38,6 +38,9 @@ class NoteViewController: UIViewController {
         view.backgroundColor = UIColor.systemBackground
         
         navigationItem.largeTitleDisplayMode = .never
+        
+        let addShared = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"), style: .plain, target: self, action: #selector(openSharedTapped))
+        navigationItem.rightBarButtonItem = addShared
                 
         attributedScrollView.translatesAutoresizingMaskIntoConstraints = false
         attributedScrollView.keyboardDismissMode = .interactive
@@ -83,6 +86,19 @@ class NoteViewController: UIViewController {
             ManagerCoreData.shared.updataNote(with: objectID, attributedText: attributedTextView.attributedText)
         }
     }
+    
+    @objc
+    func openSharedTapped() {
+        guard let text = attributedTextView.text else {
+            return
+        }
+        let activityViewController = UIActivityViewController(activityItems: [text], applicationActivities: nil)
+        if let popoverController = activityViewController.popoverPresentationController {
+            popoverController.barButtonItem = navigationItem.rightBarButtonItem
+        }
+        present(activityViewController, animated: true, completion: nil)
+    }
+
     
     func setFont(_ font: UIFont) {
         let selectedRange = attributedTextView.selectedRange

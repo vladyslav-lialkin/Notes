@@ -103,7 +103,8 @@ class NotesViewController: UIViewController {
         return UIMenu(title: "Sort By", options: .singleSelection, children: actions)
     }
     
-    @objc func addNoteTapped() {
+    @objc 
+    func addNoteTapped() {
         let objectID = ManagerCoreData.shared.createNote(attributedText: NSAttributedString.init(string: ""))
         let nextViewController = NoteViewController(objectID: objectID!)
         nextViewController.hidesBottomBarWhenPushed = true
