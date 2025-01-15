@@ -1,4 +1,4 @@
-# Weather
+# Notes clone
 
 ## Overview
 Notes is a project developed based on the MVC architecture. Notes is a program in which users can create notes and describe their lives, dreams, and travels, save and browse them on the main screen, and manage them.
